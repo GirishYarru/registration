@@ -11,13 +11,10 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.registration.processor.core.constant.LoggerFileConstant;
 import io.mosip.registration.processor.core.exception.util.PlatformErrorMessages;
 import io.mosip.registration.processor.core.logger.RegProcessorLogger;
-import io.mosip.registration.processor.core.packet.dto.demographicinfo.identify.RegistrationProcessorIdentity;
 import io.mosip.registration.processor.core.packet.dto.idjson.Document;
 import io.mosip.registration.processor.core.util.JsonUtil;
 import io.mosip.registration.processor.packet.storage.exception.IdentityNotFoundException;
@@ -25,17 +22,13 @@ import io.mosip.registration.processor.packet.storage.utils.Utilities;
 
 /**
  * @author M1022006
- *@author Girish Yarru
+ * @author Girish Yarru
  */
 @Component
 public class DocumentUtility {
 
 	/** The reg proc logger. */
 	private static Logger regProcLogger = RegProcessorLogger.getLogger(DocumentUtility.class);
-
-	/** The reg processor identity json. */
-	@Autowired
-	private RegistrationProcessorIdentity regProcessorIdentityJson;
 
 	/** The Constant LANGUAGE. */
 	private static final String FORMAT = "format";
@@ -59,17 +52,13 @@ public class DocumentUtility {
 		JSONObject documentPOBnode;
 
 		String demographicJsonString = new String(bytes);
-		String getIdentityJsonString = Utilities.getJson(utility.getConfigServerFileStorageURL(),
-				utility.getGetRegProcessorIdentityJson());
-		ObjectMapper mapIdentityJsonStringToObject = new ObjectMapper();
-		regProcessorIdentityJson = mapIdentityJsonStringToObject.readValue(getIdentityJsonString,
-				RegistrationProcessorIdentity.class);
+		JSONObject mappingJson = utility.getRegistrationProcessorIdentityJson();
 		JSONObject demographicJson = (JSONObject) JsonUtil.objectMapperReadValue(demographicJsonString,
 				JSONObject.class);
-		String poAValue = regProcessorIdentityJson.getIdentity().getPoa().getValue();
-		String poIValue = regProcessorIdentityJson.getIdentity().getPoi().getValue();
-		String poRValue = regProcessorIdentityJson.getIdentity().getPor().getValue();
-		String poBValue = regProcessorIdentityJson.getIdentity().getPob().getValue();
+		String poAValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, "poa"),VALUE);
+		String poIValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, "poi"),VALUE);
+		String poRValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, "por"),VALUE);
+		String poBValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, "pob"),VALUE);
 		JSONObject demographicIdentity = JsonUtil.getJSONObject(demographicJson,
 				utility.getGetRegProcessorDemographicIdentity());
 		if (demographicIdentity == null)

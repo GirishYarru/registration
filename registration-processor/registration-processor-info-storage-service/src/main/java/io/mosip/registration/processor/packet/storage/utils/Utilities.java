@@ -47,7 +47,6 @@ import io.mosip.registration.processor.core.idrepo.dto.RequestDto;
 import io.mosip.registration.processor.core.logger.RegProcessorLogger;
 import io.mosip.registration.processor.core.packet.dto.Identity;
 import io.mosip.registration.processor.core.packet.dto.PacketMetaInfo;
-import io.mosip.registration.processor.core.packet.dto.demographicinfo.identify.RegistrationProcessorIdentity;
 import io.mosip.registration.processor.core.packet.dto.vid.VidResponseDTO;
 import io.mosip.registration.processor.core.queue.factory.MosipQueue;
 import io.mosip.registration.processor.core.spi.filesystem.manager.PacketManager;
@@ -168,10 +167,6 @@ public class Utilities {
 	@Autowired
 	private PacketInfoManager<Identity, ApplicantInfoDto> packetInfoManager;
 
-	/** The reg processor identity json. */
-	@Autowired
-	private RegistrationProcessorIdentity regProcessorIdentityJson;
-
 	/** The Constant INBOUNDQUEUENAME. */
 	private static final String INBOUNDQUEUENAME = "inboundQueueName";
 
@@ -201,8 +196,8 @@ public class Utilities {
 
 	/** The Constant RANDOMIZE_FALSE. */
 	private static final String RANDOMIZE_FALSE = ")?randomize=false";
-
-	private static final String CONFIGURE_MONITOR_IN_ACTIVITY = "?wireFormat.maxInactivityDuration=0";
+	
+	private static final String VALUE = "value";
 
 	/**
 	 * Gets the json.
@@ -240,9 +235,9 @@ public class Utilities {
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(),
 				registrationId, "Utilities::getApplicantAge()::entry");
 
-		RegistrationProcessorIdentity regProcessorIdentityJson = getRegistrationProcessorIdentityJson();
-		String ageKey = regProcessorIdentityJson.getIdentity().getAge().getValue();
-		String dobKey = regProcessorIdentityJson.getIdentity().getDob().getValue();
+		JSONObject regProcessorIdentityJson = getRegistrationProcessorIdentityJson();
+		String ageKey = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "age"), VALUE);
+		String dobKey = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "dob"), VALUE);
 
 		JSONObject demographicIdentity = getDemographicIdentityJSONObject(registrationId);
 		String applicantDob = JsonUtil.getJSONValue(demographicIdentity, dobKey);
@@ -391,7 +386,7 @@ public class Utilities {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public RegistrationProcessorIdentity getRegistrationProcessorIdentityJson() throws IOException {
+	public JSONObject getRegistrationProcessorIdentityJson() throws IOException {
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(), "",
 				"Utilities::getRegistrationProcessorIdentityJson()::entry");
 
@@ -399,7 +394,7 @@ public class Utilities {
 		ObjectMapper mapIdentityJsonStringToObject = new ObjectMapper();
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(), "",
 				"Utilities::getRegistrationProcessorIdentityJson()::exit");
-		return mapIdentityJsonStringToObject.readValue(getIdentityJsonString, RegistrationProcessorIdentity.class);
+		return JsonUtil.getJSONObject(mapIdentityJsonStringToObject.readValue(getIdentityJsonString, JSONObject.class), "identity");
 
 	}
 
@@ -630,14 +625,13 @@ public class Utilities {
 				regId, "Utilities::getAllDocumentsByRegId():: entry");
 
 		List<Documents> applicantDocuments = new ArrayList<>();
-		JSONObject idJson = null;
-		idJson = getDemographicIdentityJSONObject(regId);
-		regProcessorIdentityJson = getRegistrationProcessorIdentityJson();
-		String proofOfAddressLabel = regProcessorIdentityJson.getIdentity().getPoa().getValue();
-		String proofOfDateOfBirthLabel = regProcessorIdentityJson.getIdentity().getPob().getValue();
-		String proofOfIdentityLabel = regProcessorIdentityJson.getIdentity().getPoi().getValue();
-		String proofOfRelationshipLabel = regProcessorIdentityJson.getIdentity().getPor().getValue();
-		String applicantBiometricLabel = regProcessorIdentityJson.getIdentity().getIndividualBiometrics().getValue();
+		JSONObject idJson =  getDemographicIdentityJSONObject(regId);
+		JSONObject regProcessorIdentityJson = getRegistrationProcessorIdentityJson();
+		String proofOfAddressLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "poa"), VALUE);
+		String proofOfDateOfBirthLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "pob"), VALUE);
+		String proofOfIdentityLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "poi"), VALUE);
+		String proofOfRelationshipLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "por"), VALUE);
+		String applicantBiometricLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "individualBiometrics"), VALUE);
 
 		JSONObject proofOfAddress = JsonUtil.getJSONObject(idJson, proofOfAddressLabel);
 		JSONObject proofOfDateOfBirth = JsonUtil.getJSONObject(idJson, proofOfDateOfBirthLabel);

@@ -130,6 +130,8 @@ public class JsonUtil {
 	 * @return the JSON value
 	 */
 	public static <T> T getJSONValue(JSONObject jsonObject, String key) {
+		if(jsonObject == null)
+			return null;
 		T value = (T) jsonObject.get(key);
 		return value;
 	}
