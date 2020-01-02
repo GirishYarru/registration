@@ -36,7 +36,6 @@ import io.mosip.registration.processor.core.logger.RegProcessorLogger;
 import io.mosip.registration.processor.core.packet.dto.Identity;
 import io.mosip.registration.processor.core.packet.dto.RegOsiDto;
 import io.mosip.registration.processor.core.packet.dto.ServerError;
-import io.mosip.registration.processor.core.packet.dto.demographicinfo.identify.RegistrationProcessorIdentity;
 import io.mosip.registration.processor.core.packet.dto.masterdata.UserResponseDto;
 import io.mosip.registration.processor.core.spi.filesystem.manager.PacketManager;
 import io.mosip.registration.processor.core.spi.packetmanager.PacketInfoManager;
@@ -162,7 +161,7 @@ public class OSIValidator {
 				registrationId, "OSIValidator::isValidOSI()::entry");
 		boolean isValidOsi = false;
 		JSONObject demographicIdentity = utility.getDemographicIdentityJSONObject(registrationId);
-		RegistrationProcessorIdentity regProcessorIdentityJson = utility.getRegistrationProcessorIdentityJson();
+		JSONObject regProcessorIdentityJson = utility.getRegistrationProcessorIdentityJson();
 		Identity identity = osiUtils.getIdentity(registrationId);
 		/** Getting data from packet MetadataInfo */
 		RegOsiDto regOsi = osiUtils.getOSIDetailsFromMetaInfo(registrationId, identity);
@@ -438,7 +437,7 @@ public class OSIValidator {
 	 * @throws ParentOnHoldException 
 	 */
 	private boolean isValidIntroducer(String registrationId, JSONObject demographicIdentity,
-			RegistrationProcessorIdentity regProcessorIdentityJson, InternalRegistrationStatusDto registrationStatusDto)
+			JSONObject regProcessorIdentityJson, InternalRegistrationStatusDto registrationStatusDto)
 			throws IOException, ApisResourceAccessException, InvalidKeySpecException, NoSuchAlgorithmException,
 			ParserConfigurationException, SAXException, BiometricException, BioTypeException,
 			PacketDecryptionFailureException, io.mosip.kernel.core.exception.IOException, ParentOnHoldException {
@@ -452,16 +451,16 @@ public class OSIValidator {
 			if (age < ageThreshold) {
 				if (!introducerValidation)
 					return true;
-				String introducerUinLabel = regProcessorIdentityJson.getIdentity().getParentOrGuardianUIN().getValue();
-				String introducerRidLabel = regProcessorIdentityJson.getIdentity().getParentOrGuardianRID().getValue();
+				JSONObject json = JsonUtil.getJSONObject(regProcessorIdentityJson, "parentOrGuardianRID");
+				String introducerUinLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "parentOrGuardianUIN"), VALUE);
+				String introducerRidLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "parentOrGuardianRID"), VALUE);
 				Number introducerUinNumber = JsonUtil.getJSONValue(demographicIdentity, introducerUinLabel);
 				Number introducerRidNumber = JsonUtil.getJSONValue(demographicIdentity, introducerRidLabel);
-				String introducerBiometricsLabel = regProcessorIdentityJson.getIdentity()
-						.getParentOrGuardianBiometrics().getValue();
+				String introducerBiometricsLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "parentOrGuardianBiometrics"), VALUE);
 				String introducerBiometricsFileName = null;
 				Object object = JsonUtil.getJSONValue(demographicIdentity, introducerBiometricsLabel);
 				if (object instanceof LinkedHashMap) {
-					JSONObject json = JsonUtil.getJSONObject(demographicIdentity, introducerBiometricsLabel);
+					JSONObject json1 = JsonUtil.getJSONObject(demographicIdentity, introducerBiometricsLabel);
 					introducerBiometricsFileName = (String) json.get(VALUE);
 				}
 				String introducerUIN = numberToString(introducerUinNumber);
