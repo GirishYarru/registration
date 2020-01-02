@@ -90,6 +90,8 @@ public class JsonUtil {
 	 * @return the JSON object
 	 */
 	public static JSONObject getJSONObject(JSONObject jsonObject, Object key) {
+		if(jsonObject == null)
+			return null;
 		LinkedHashMap identity = (LinkedHashMap) jsonObject.get(key);
 		return identity != null ? new JSONObject(identity) : null;
 	}
