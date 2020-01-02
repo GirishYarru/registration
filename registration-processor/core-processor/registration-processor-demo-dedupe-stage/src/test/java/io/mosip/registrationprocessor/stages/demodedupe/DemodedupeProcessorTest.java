@@ -10,6 +10,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.beans.IntrospectionException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +36,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.core.env.Environment;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.kernel.core.fsadapter.exception.FSAdapterException;
 import io.mosip.kernel.core.util.HMACUtils;
 import io.mosip.registration.processor.core.abstractverticle.MessageDTO;
@@ -57,7 +61,6 @@ import io.mosip.registration.processor.core.packet.dto.demographicinfo.Demograph
 import io.mosip.registration.processor.core.packet.dto.demographicinfo.IndividualDemographicDedupe;
 import io.mosip.registration.processor.core.packet.dto.demographicinfo.JsonValue;
 import io.mosip.registration.processor.core.packet.dto.demographicinfo.identify.IdentityJsonValues;
-import io.mosip.registration.processor.core.packet.dto.demographicinfo.identify.RegistrationProcessorIdentity;
 import io.mosip.registration.processor.core.packet.dto.idjson.Document;
 import io.mosip.registration.processor.core.spi.filesystem.manager.PacketManager;
 import io.mosip.registration.processor.core.spi.packetmanager.PacketInfoManager;
@@ -134,9 +137,6 @@ public class DemodedupeProcessorTest {
 
 	@Mock
 	private RegistrationStatusDao registrationStatusDao;
-
-	@Mock
-	private RegistrationProcessorIdentity regProcessorIdentityJson;
 
 	@Mock
 	private Utilities utility;
@@ -286,6 +286,14 @@ public class DemodedupeProcessorTest {
 		registrationStatusDto.setRetryCount(null);
 		Mockito.when(registrationStatusService.getRegistrationStatus(anyString())).thenReturn(registrationStatusDto);
 		Mockito.doNothing().when(registrationStatusService).updateRegistrationStatus(any(), any(), any());
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("RegistrationProcessorIdentity.json").getFile());
+		inputStream = new FileInputStream(file);
+		String mappingJsonString = IOUtils.toString(inputStream,"UTF-8");
+		JSONObject mappingJsonObj= new ObjectMapper().readValue(mappingJsonString, JSONObject.class);
+		
+		Mockito.when(utility.getRegistrationProcessorIdentityJson()).thenReturn(JsonUtil.getJSONObject(mappingJsonObj, "identity"));
+
 
 	}
 
@@ -324,10 +332,6 @@ public class DemodedupeProcessorTest {
 		IdentityJsonValues identityJsonValues = new IdentityJsonValues();
 		identityJsonValues.setValue("fullName");
 
-		io.mosip.registration.processor.core.packet.dto.demographicinfo.identify.Identity identity = new io.mosip.registration.processor.core.packet.dto.demographicinfo.identify.Identity();
-		identity.setName(identityJsonValues);
-		regProcessorIdentityJson.setIdentity(identity);
-		Mockito.when(utility.getRegistrationProcessorIdentityJson()).thenReturn(regProcessorIdentityJson);
 		Mockito.when(utility.getUIn("2018701130000410092018110735")).thenReturn(Long.parseLong("2345"));
 
 		JSONArray arr = new JSONArray();
