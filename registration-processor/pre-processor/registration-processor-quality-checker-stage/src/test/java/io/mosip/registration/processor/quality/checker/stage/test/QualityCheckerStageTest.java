@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,8 @@ import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.bioapi.exception.BiometricException;
 import io.mosip.kernel.core.bioapi.model.QualityScore;
@@ -41,6 +44,7 @@ import io.mosip.registration.processor.core.abstractverticle.MosipEventBus;
 import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
 import io.mosip.registration.processor.core.exception.PacketDecryptionFailureException;
 import io.mosip.registration.processor.core.spi.filesystem.manager.PacketManager;
+import io.mosip.registration.processor.core.util.JsonUtil;
 import io.mosip.registration.processor.core.util.RegistrationExceptionMapperUtil;
 import io.mosip.registration.processor.packet.storage.utils.Utilities;
 import io.mosip.registration.processor.quality.checker.stage.QualityCheckerStage;
@@ -183,6 +187,11 @@ public class QualityCheckerStageTest {
 		List<BIR> birList = getBIRList(birTypeList);
 		Mockito.when(cbeffUtil.getBIRDataFromXML(any())).thenReturn(birTypeList);
 		Mockito.when(cbeffUtil.convertBIRTypeToBIR(any())).thenReturn(birList);
+		File file = new File(classLoader.getResource("RegistrationProcessorIdentity.json").getFile());
+		InputStream inputStream = new FileInputStream(file);
+		String mappingJson = IOUtils.toString(inputStream);
+		JSONObject mappingJSONObject = JsonUtil.objectMapperReadValue(mappingJson, JSONObject.class);
+		Mockito.when(utility.getRegistrationProcessorIdentityJson()).thenReturn(JsonUtil.getJSONObject(mappingJSONObject, "identity"));
 	}
 
 	@Test
