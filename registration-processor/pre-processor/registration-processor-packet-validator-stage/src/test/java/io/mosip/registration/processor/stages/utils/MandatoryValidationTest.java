@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
+import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,6 +73,8 @@ public class MandatoryValidationTest {
 
 		mandatoryValidation = new MandatoryValidation(adapter, registrationStatusDto, utility);
 
+		Mockito.when(utility.getRegistrationProcessorIdentityJson()).thenReturn(JsonUtil.getJSONObject(JsonUtil.objectMapperReadValue(mappingJsonString, JSONObject.class), "identity"));
+		
 		Mockito.when(adapter.getFile(any(), any())).thenReturn(inputStream);
 
 		PowerMockito.mockStatic(IOUtils.class);
