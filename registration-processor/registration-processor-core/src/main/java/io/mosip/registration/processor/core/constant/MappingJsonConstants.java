@@ -13,5 +13,16 @@ public class MappingJsonConstants {
 	public static final String PARENT_OR_GUARDIAN_BIO = "parentOrGuardianBiometrics";
 	public static final String EMAIL = "email";
 	public static final String PHONE = "phone";
+	public static final String NAME = "name";
+	public static final String DOB = "dob";
+	public static final String GENDER = "gender";
+	public static final String TYPE = "type";
+	public static final String FORMAT = "format";
+	public static final String AGE = "age";
+
+	
+
+
+
 
 }

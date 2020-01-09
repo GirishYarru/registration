@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.registration.processor.core.constant.LoggerFileConstant;
+import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.exception.util.PlatformErrorMessages;
 import io.mosip.registration.processor.core.logger.RegProcessorLogger;
 import io.mosip.registration.processor.core.packet.dto.idjson.Document;
@@ -30,14 +31,6 @@ public class DocumentUtility {
 	/** The reg proc logger. */
 	private static Logger regProcLogger = RegProcessorLogger.getLogger(DocumentUtility.class);
 
-	/** The Constant LANGUAGE. */
-	private static final String FORMAT = "format";
-
-	/** The Constant LABEL. */
-	private static final String TYPE = "type";
-
-	/** The Constant VALUE. */
-	private static final String VALUE = "value";
 
 	@Autowired
 	private Utilities utility;
@@ -55,10 +48,10 @@ public class DocumentUtility {
 		JSONObject mappingJson = utility.getRegistrationProcessorIdentityJson();
 		JSONObject demographicJson = (JSONObject) JsonUtil.objectMapperReadValue(demographicJsonString,
 				JSONObject.class);
-		String poAValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, "poa"),VALUE);
-		String poIValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, "poi"),VALUE);
-		String poRValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, "por"),VALUE);
-		String poBValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, "pob"),VALUE);
+		String poAValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, MappingJsonConstants.POA),MappingJsonConstants.VALUE);
+		String poIValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, MappingJsonConstants.POI),MappingJsonConstants.VALUE);
+		String poRValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, MappingJsonConstants.POR),MappingJsonConstants.VALUE);
+		String poBValue = JsonUtil.getJSONValue(JsonUtil.getJSONObject(mappingJson, MappingJsonConstants.POB),MappingJsonConstants.VALUE);
 		JSONObject demographicIdentity = JsonUtil.getJSONObject(demographicJson,
 				utility.getGetRegProcessorDemographicIdentity());
 		if (demographicIdentity == null)
@@ -89,9 +82,9 @@ public class DocumentUtility {
 	private Document getDocument(JSONObject jsonNode, String category) {
 		Document document = new Document();
 		document.setDocumentCategory(category);
-		document.setDocumentType((String) jsonNode.get(TYPE));
-		document.setFormat((String) jsonNode.get(FORMAT));
-		document.setDocumentName((String) jsonNode.get(VALUE));
+		document.setDocumentType((String) jsonNode.get(MappingJsonConstants.TYPE));
+		document.setFormat((String) jsonNode.get(MappingJsonConstants.FORMAT));
+		document.setDocumentName((String) jsonNode.get(MappingJsonConstants.VALUE));
 		return document;
 	}
 

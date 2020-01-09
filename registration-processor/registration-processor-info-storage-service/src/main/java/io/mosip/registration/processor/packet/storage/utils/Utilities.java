@@ -33,6 +33,7 @@ import io.mosip.registration.processor.abis.queue.dto.AbisQueueDetails;
 import io.mosip.registration.processor.core.code.ApiName;
 import io.mosip.registration.processor.core.common.rest.dto.ErrorDTO;
 import io.mosip.registration.processor.core.constant.LoggerFileConstant;
+import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.constant.PacketFiles;
 import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
 import io.mosip.registration.processor.core.exception.PacketDecryptionFailureException;
@@ -236,8 +237,8 @@ public class Utilities {
 				registrationId, "Utilities::getApplicantAge()::entry");
 
 		JSONObject regProcessorIdentityJson = getRegistrationProcessorIdentityJson();
-		String ageKey = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "age"), VALUE);
-		String dobKey = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "dob"), VALUE);
+		String ageKey = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, MappingJsonConstants.AGE), VALUE);
+		String dobKey = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, MappingJsonConstants.DOB), VALUE);
 
 		JSONObject demographicIdentity = getDemographicIdentityJSONObject(registrationId);
 		String applicantDob = JsonUtil.getJSONValue(demographicIdentity, dobKey);
@@ -348,7 +349,6 @@ public class Utilities {
 				String userName = validateAbisQueueJsonAndReturnValue(json, USERNAME);
 				String password = validateAbisQueueJsonAndReturnValue(json, PASSWORD);
 				String brokerUrl = validateAbisQueueJsonAndReturnValue(json, BROKERURL);
-				// brokerUrl = brokerUrl + CONFIGURE_MONITOR_IN_ACTIVITY;
 				String failOverBrokerUrl = FAIL_OVER + brokerUrl + "," + brokerUrl + RANDOMIZE_FALSE;
 				String typeOfQueue = validateAbisQueueJsonAndReturnValue(json, TYPEOFQUEUE);
 				String inboundQueueName = validateAbisQueueJsonAndReturnValue(json, INBOUNDQUEUENAME);
@@ -394,7 +394,7 @@ public class Utilities {
 		ObjectMapper mapIdentityJsonStringToObject = new ObjectMapper();
 		regProcLogger.debug(LoggerFileConstant.SESSIONID.toString(), LoggerFileConstant.USERID.toString(), "",
 				"Utilities::getRegistrationProcessorIdentityJson()::exit");
-		return JsonUtil.getJSONObject(mapIdentityJsonStringToObject.readValue(getIdentityJsonString, JSONObject.class), "identity");
+		return JsonUtil.getJSONObject(mapIdentityJsonStringToObject.readValue(getIdentityJsonString, JSONObject.class), MappingJsonConstants.IDENTITY);
 
 	}
 
@@ -627,11 +627,11 @@ public class Utilities {
 		List<Documents> applicantDocuments = new ArrayList<>();
 		JSONObject idJson =  getDemographicIdentityJSONObject(regId);
 		JSONObject regProcessorIdentityJson = getRegistrationProcessorIdentityJson();
-		String proofOfAddressLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "poa"), VALUE);
-		String proofOfDateOfBirthLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "pob"), VALUE);
-		String proofOfIdentityLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "poi"), VALUE);
-		String proofOfRelationshipLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "por"), VALUE);
-		String applicantBiometricLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "individualBiometrics"), VALUE);
+		String proofOfAddressLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, MappingJsonConstants.POA), VALUE);
+		String proofOfDateOfBirthLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, MappingJsonConstants.POB), VALUE);
+		String proofOfIdentityLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, MappingJsonConstants.POI), VALUE);
+		String proofOfRelationshipLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, MappingJsonConstants.POR), VALUE);
+		String applicantBiometricLabel = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, MappingJsonConstants.INDIVIDUAL_BIOMETRICS), VALUE);
 
 		JSONObject proofOfAddress = JsonUtil.getJSONObject(idJson, proofOfAddressLabel);
 		JSONObject proofOfDateOfBirth = JsonUtil.getJSONObject(idJson, proofOfDateOfBirthLabel);

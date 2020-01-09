@@ -19,6 +19,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.packet.dto.idjson.Document;
 import io.mosip.registration.processor.core.spi.filesystem.manager.PacketManager;
 import io.mosip.registration.processor.core.util.JsonUtil;
@@ -67,7 +68,7 @@ public class DocumentUtilityTest {
 				"identity");
 		;
 		Mockito.when(utility.getRegistrationProcessorIdentityJson()).thenReturn(identityMappingJson);
-		Mockito.when(utility.getGetRegProcessorDemographicIdentity()).thenReturn("identity");
+		Mockito.when(utility.getGetRegProcessorDemographicIdentity()).thenReturn(MappingJsonConstants.IDENTITY);
 		FileInputStream fstream = new FileInputStream("src/test/resources/ID.json");
 		byte[] bytes = IOUtils.toByteArray(fstream);
 		String docCat = null;

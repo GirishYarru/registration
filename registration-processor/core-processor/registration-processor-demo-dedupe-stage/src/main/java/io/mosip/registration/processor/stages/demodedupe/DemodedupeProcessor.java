@@ -29,6 +29,7 @@ import io.mosip.registration.processor.core.code.RegistrationTransactionStatusCo
 import io.mosip.registration.processor.core.code.RegistrationTransactionTypeCode;
 import io.mosip.registration.processor.core.constant.AbisConstant;
 import io.mosip.registration.processor.core.constant.LoggerFileConstant;
+import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.constant.PacketFiles;
 import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
 import io.mosip.registration.processor.core.exception.PacketDecryptionFailureException;
@@ -222,7 +223,7 @@ public class DemodedupeProcessor {
 				}
 				List<JsonValue[]> jsonValueList = new ArrayList<>();
 				if (demographicData.getName() == null || demographicData.getName().isEmpty()) {
-					String names = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "name"), "value");
+					String names = JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, MappingJsonConstants.NAME), MappingJsonConstants.VALUE);
 					Arrays.stream(names.split(","))
 							.forEach(name -> {
 								JsonValue[] nameArray = JsonUtil.getJsonValues(jsonObject, name);
@@ -235,11 +236,11 @@ public class DemodedupeProcessor {
 				else
 					demoDedupeData.setName(demographicData.getName());
 				demoDedupeData.setDateOfBirth(demographicData.getDateOfBirth() == null
-						? JsonUtil.getJSONValue(jsonObject, JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "dob"), "value"))
+						? JsonUtil.getJSONValue(jsonObject, JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, MappingJsonConstants.DOB), MappingJsonConstants.VALUE))
 						: demographicData.getDateOfBirth());
 				demoDedupeData.setGender(demographicData.getGender() == null
 						? JsonUtil.getJsonValues(jsonObject,
-								JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, "gender"), "value"))
+								JsonUtil.getJSONValue(JsonUtil.getJSONObject(regProcessorIdentityJson, MappingJsonConstants.GENDER), MappingJsonConstants.VALUE))
 						: demographicData.getGender());
 				packetInfoManager.saveIndividualDemographicDedupeUpdatePacket(demoDedupeData, registrationId, moduleId,
 						moduleName);

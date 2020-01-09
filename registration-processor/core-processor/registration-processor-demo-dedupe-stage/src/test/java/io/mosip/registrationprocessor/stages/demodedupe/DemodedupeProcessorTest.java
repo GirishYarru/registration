@@ -47,6 +47,7 @@ import io.mosip.registration.processor.core.code.EventId;
 import io.mosip.registration.processor.core.code.EventName;
 import io.mosip.registration.processor.core.code.EventType;
 import io.mosip.registration.processor.core.constant.AbisConstant;
+import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.constant.PacketFiles;
 import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
 import io.mosip.registration.processor.core.http.ResponseWrapper;
@@ -292,7 +293,7 @@ public class DemodedupeProcessorTest {
 		String mappingJsonString = IOUtils.toString(inputStream,"UTF-8");
 		JSONObject mappingJsonObj= new ObjectMapper().readValue(mappingJsonString, JSONObject.class);
 		
-		Mockito.when(utility.getRegistrationProcessorIdentityJson()).thenReturn(JsonUtil.getJSONObject(mappingJsonObj, "identity"));
+		Mockito.when(utility.getRegistrationProcessorIdentityJson()).thenReturn(JsonUtil.getJSONObject(mappingJsonObj, MappingJsonConstants.IDENTITY));
 
 
 	}

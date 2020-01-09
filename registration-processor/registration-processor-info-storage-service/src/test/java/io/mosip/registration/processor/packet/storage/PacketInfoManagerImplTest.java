@@ -36,6 +36,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.dataaccess.hibernate.constant.HibernateErrorCode;
 import io.mosip.registration.processor.core.code.DedupeSourceName;
+import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.logger.LogDescription;
 import io.mosip.registration.processor.core.packet.dto.Applicant;
 import io.mosip.registration.processor.core.packet.dto.Biometric;
@@ -545,7 +546,7 @@ public class PacketInfoManagerImplTest {
 		Mockito.when(utility.getConfigServerFileStorageURL()).thenReturn(CONFIG_SERVER_URL);
 		Mockito.when(utility.getGetRegProcessorDemographicIdentity()).thenReturn("identity");
 		Mockito.when(utility.getGetRegProcessorIdentityJson()).thenReturn("RegistrationProcessorIdentity.json");
-		Mockito.when(utility.getRegistrationProcessorIdentityJson()).thenReturn(JsonUtil.getJSONObject(JsonUtil.objectMapperReadValue(identityMappingjsonString, JSONObject.class), "identity"));
+		Mockito.when(utility.getRegistrationProcessorIdentityJson()).thenReturn(JsonUtil.getJSONObject(JsonUtil.objectMapperReadValue(identityMappingjsonString, JSONObject.class), MappingJsonConstants.IDENTITY));
 		
 
 	}

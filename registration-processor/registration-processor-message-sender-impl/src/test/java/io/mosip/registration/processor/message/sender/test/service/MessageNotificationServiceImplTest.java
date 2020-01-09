@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.kernel.core.util.JsonUtils;
 import io.mosip.registration.processor.core.code.ApiName;
 import io.mosip.registration.processor.core.constant.IdType;
+import io.mosip.registration.processor.core.constant.MappingJsonConstants;
 import io.mosip.registration.processor.core.exception.ApisResourceAccessException;
 import io.mosip.registration.processor.core.exception.PacketDecryptionFailureException;
 import io.mosip.registration.processor.core.http.ResponseWrapper;
@@ -170,7 +171,7 @@ public class MessageNotificationServiceImplTest {
 		InputStream is = new FileInputStream(mappingJsonFile);
 		String value = IOUtils.toString(is);
 		Mockito.when(utility.getRegistrationProcessorIdentityJson())
-				.thenReturn(JsonUtil.getJSONObject(JsonUtil.objectMapperReadValue(value, JSONObject.class),"identity"));
+				.thenReturn(JsonUtil.getJSONObject(JsonUtil.objectMapperReadValue(value, JSONObject.class),MappingJsonConstants.IDENTITY));
 		PowerMockito.mockStatic(Utilities.class);
 		PowerMockito.when(Utilities.class, "getJson", anyString(), anyString()).thenReturn(value);
 		Map<String, Long> map1 = new HashMap<>();
